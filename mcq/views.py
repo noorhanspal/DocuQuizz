@@ -4,6 +4,7 @@ from pathlib import Path
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render
+from .extract_text import extract_pdf_text, extract_docx_text
 
 def home(request):
 
