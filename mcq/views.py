@@ -39,14 +39,30 @@ def home(request):
 
             file_path = storage.path(filename)
 
-            if extension == '.pdf':
-                extracted_text = extract_pdf_text(file_path)
+            
+            try:
+                if extension == '.pdf':
+                    extracted_text = extract_pdf_text(file_path)
 
-            elif extension == '.docx':
-                extracted_text = extract_docx_text(file_path)
+                elif extension == '.docx':
+                    extracted_text = extract_docx_text(file_path)
 
-            else:
-                extracted_text = ""
+                else:
+                    extracted_text = ""
+
+            except Exception:
+                storage.delete(filename)
+
+                return render(request, 'mcq/home.html', {
+                    'error': 'Unable to read this document. Please upload a valid file.'
+                })
+
+            if not extracted_text.strip():
+                storage.delete(filename)
+                
+                return render(request, 'mcq/home.html', {
+                'error': 'No readable text found in the document.'
+                })
 
             return render(request, 'mcq/home.html', {
                 'success': f'File uploaded successfully: {filename}',
