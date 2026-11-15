@@ -6,6 +6,7 @@ from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render
 from .extract_text import extract_pdf_text, extract_docx_text
 
+
 def home(request):
 
     if request.method == 'POST':
@@ -36,8 +37,20 @@ def home(request):
                 uploaded_file
             )
 
+            file_path = storage.path(filename)
+
+            if extension == '.pdf':
+                extracted_text = extract_pdf_text(file_path)
+
+            elif extension == '.docx':
+                extracted_text = extract_docx_text(file_path)
+
+            else:
+                extracted_text = ""
+
             return render(request, 'mcq/home.html', {
-                'success': f'File uploaded successfully: {filename}'
+                'success': f'File uploaded successfully: {filename}',
+                'extracted_text': extracted_text
             })
 
         else:
@@ -46,4 +59,3 @@ def home(request):
             })
 
     return render(request, 'mcq/home.html')
-

@@ -71,6 +71,13 @@
                 </p>
             {% endif %}
 
+            {% if extracted_text %}
+                <div class="extracted-text-box">
+                    <h3>Extracted Document Text</h3>
+                    <pre>{{ extracted_text }}</pre>
+                </div>
+            {% endif %}
+
             <!-- Error Message -->
             {% if error %}
                 <p class="error-message">
