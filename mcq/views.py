@@ -4,7 +4,9 @@ from pathlib import Path
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render
+
 from .extract_text import extract_pdf_text, extract_docx_text
+from .chunk_text import split_text_into_chunks
 
 
 def home(request):
@@ -39,7 +41,6 @@ def home(request):
 
             file_path = storage.path(filename)
 
-            
             try:
                 if extension == '.pdf':
                     extracted_text = extract_pdf_text(file_path)
@@ -59,10 +60,16 @@ def home(request):
 
             if not extracted_text.strip():
                 storage.delete(filename)
-                
+
                 return render(request, 'mcq/home.html', {
-                'error': 'No readable text found in the document.'
+                    'error': 'No readable text found in the document.'
                 })
+
+            # Split extracted text into chunks
+            chunks = split_text_into_chunks(extracted_text, 1000)
+
+            # Print total chunks in terminal
+            print("Total chunks created:", len(chunks))
 
             return render(request, 'mcq/home.html', {
                 'success': f'File uploaded successfully: {filename}',
